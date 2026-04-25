@@ -79,7 +79,7 @@
                                 <button wire:click="edit({{ $barang->id }})" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200">
                                     <span class="material-symbols-outlined text-xl">edit_square</span>
                                 </button>
-                                <button wire:click.prevent="confirmDelete({{ $barang->id }})" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-200">
+                                <button type="button" wire:click="confirmDelete({{ $barang->id }})" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all duration-200">
                                     <span class="material-symbols-outlined text-xl">delete</span>
                                 </button>
                             </div>
@@ -172,7 +172,8 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div>      
+    </div>
 
     <!-- Debug: Selected ID: {{ $selectedId }} -->
     @if($selectedId)
@@ -182,42 +183,40 @@
     @endif
 
     <!-- Modal Konfirmasi Hapus -->
-    <div x-show="$wire.selectedId" 
-         class="fixed inset-0 z-[999] overflow-y-auto"
-         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
-        
-        <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-[2px]" @click="$wire.set('selectedId', null)"></div>
-        
-        <div class="relative min-h-screen flex items-center justify-center p-4">
-            <div class="relative bg-white w-full max-w-sm rounded-[2rem] shadow-2xl p-8 overflow-hidden"
-                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                 x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
-                
-                <div class="text-center">
-                    <div class="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="material-symbols-outlined text-rose-600 text-2xl">delete_forever</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-2">Hapus Barang</h3>
-                    <p class="text-slate-500 text-sm mb-8">Apakah Anda yakin ingin menghapus barang ini? Tindakan ini tidak dapat dibatalkan.</p>
+    @if($selectedId)
+        <div class="fixed inset-0 z-[999] overflow-y-auto">
+            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-[2px]" @click="$wire.set('selectedId', null)"></div>
+            
+            <div class="relative min-h-screen flex items-center justify-center p-4">
+                <div class="relative bg-white w-full max-w-sm rounded-[2rem] shadow-2xl p-8 overflow-hidden"
+                     x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95 translate-y-4" x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 scale-100 translate-y-0" x-transition:leave-end="opacity-0 scale-95 translate-y-4">
                     
-                    <div class="flex space-x-3">
-                        <button wire:click="$set('selectedId', null)" :disabled="$wire.isDeleting" class="flex-1 py-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Batalkan</button>
-                        <button wire:click="delete(selectedId)" :disabled="$wire.isDeleting" class="flex-1 py-3 bg-rose-600 text-white rounded-2xl text-sm font-bold hover:bg-rose-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
-                            <span x-show="!$wire.isDeleting">Hapus</span>
-                            <span x-show="$wire.isDeleting" class="flex items-center">
-                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Menghapus...
-                            </span>
-                        </button>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="material-symbols-outlined text-rose-600 text-2xl">delete_forever</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Hapus Barang</h3>
+                        <p class="text-slate-500 text-sm mb-8">Apakah Anda yakin ingin menghapus barang ini? Tindakan ini tidak dapat dibatalkan.</p>
+                        
+                        <div class="flex space-x-3">
+                            <button wire:click="$set('selectedId', null)" :disabled="$wire.isDeleting" class="flex-1 py-3 text-sm font-bold text-slate-400 hover:text-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Batalkan</button>
+                        <button wire:click="delete({{ $selectedId }})" :disabled="$wire.isDeleting" class="flex-1 py-3 bg-rose-600 text-white rounded-2xl text-sm font-bold hover:bg-rose-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center">
+                                <span x-show="!$wire.isDeleting">Hapus</span>
+                                <span x-show="$wire.isDeleting" class="flex items-center">
+                                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                    </svg>
+                                    Menghapus...
+                                </span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endif
         {{ $barangs->links() }}
     </div>
 </div>
