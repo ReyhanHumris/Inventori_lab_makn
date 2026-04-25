@@ -102,50 +102,84 @@
     </div>
 
     <div x-show="openModal" x-cloak class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-        <div @click.away="openModal = false" class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden transform transition-all">
-            <div class="px-8 py-6 bg-emerald-600 text-white flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <span class="material-symbols-outlined">edit_square</span>
-                    <h3 class="text-xl font-bold">Input Peminjaman</h3>
-                </div>
-                <button @click="openModal = false" class="hover:rotate-90 transition-transform"><span class="material-symbols-outlined">close</span></button>
+    <div @click.away="openModal = false" class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden transform transition-all">
+        {{-- Header Modal --}}
+        <div class="px-8 py-6 bg-emerald-600 text-white flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined">edit_square</span>
+                <h3 class="text-xl font-bold">Form Peminjaman Aset</h3>
             </div>
-            
-            <form wire:submit.prevent="simpanPeminjaman" class="p-8 space-y-5">
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Informasi Peminjam</label>
-                    <div class="grid grid-cols-2 gap-3 mt-1">
-                        <input wire:model="nama_peminjam" type="text" placeholder="Nama Lengkap" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-500 outline-none">
-                        <input wire:model="nim" type="text" placeholder="NIM/NISN" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-emerald-500 outline-none">
-                    </div>
+            <button @click="openModal = false" class="hover:rotate-90 transition-transform">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        
+        {{-- Body Form --}}
+        <form wire:submit.prevent="simpanPeminjaman" class="p-8 space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Nama Peminjam</label>
+                    <input wire:model="nama_peminjam" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-600 outline-none transition-all" placeholder="Contoh: Andi Wijaya" type="text"/>
                     @error('nama_peminjam') <span class="text-rose-500 text-[10px]">{{ $message }}</span> @enderror
                 </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">NIM / NIDN</label>
+                    <input wire:model="nim" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-600 outline-none transition-all" placeholder="12345678" type="text"/>
+                    @error('nim') <span class="text-rose-500 text-[10px]">{{ $message }}</span> @enderror
+                </div>
+            </div>
 
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Pilihan Alat</label>
-                    <select wire:model="barang_id" class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-200 outline-none">
-                        <option value="">-- Pilih Alat di Lab --</option>
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Pilih Barang</label>
+                <div class="relative">
+                    <select wire:model.live="barang_id" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-600 outline-none appearance-none transition-all bg-white">
+                        <option value="">Pilih aset dari inventaris...</option>
                         @foreach($daftar_barang as $b)
                             <option value="{{ $b->id }}">{{ $b->nama_barang }} (Tersedia: {{ $b->stok_tersedia }})</option>
                         @endforeach
                     </select>
+                    <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">keyboard_arrow_down</span>
                 </div>
+            </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Jumlah</label>
-                        <input wire:model="jumlah" type="number" class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-200 outline-none">
-                    </div>
-                    <div>
-                        <label class="text-[10px] font-bold text-slate-400 uppercase ml-1">Batas Kembali</label>
-                        <input wire:model="tgl_kembali" type="datetime-local" class="w-full mt-1 px-4 py-3 rounded-xl border border-slate-200 outline-none">
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Jumlah Pinjam</label>
+                    <input wire:model.live="jumlah" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-600 outline-none transition-all" type="number"/>
+                    
+                    {{-- Alert Stok Habis (Tampil jika jumlah > stok tersedia) --}}
+                    @if($barang_id && $jumlah > ($daftar_barang->find($barang_id)->stok_tersedia ?? 0))
+                        <div class="flex items-center gap-2 p-2 bg-rose-50 border border-rose-100 rounded-lg text-rose-600 mt-2">
+                            <span class="material-symbols-outlined text-sm">error</span>
+                            <p class="text-[10px] font-semibold">Stok tidak cukup. Sisa: {{ $daftar_barang->find($barang_id)->stok_tersedia }} unit.</p>
+                        </div>
+                    @endif
                 </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Batas Kembali</label>
+                    <input wire:model="tgl_kembali" type="datetime-local" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-600 outline-none transition-all">
+                </div>
+            </div>
 
-                <button type="submit" class="w-full py-4 bg-emerald-600 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-700 transition-all transform active:scale-95">
-                    Konfirmasi Peminjaman
+            <div class="space-y-2">
+                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Keperluan</label>
+                <textarea wire:model="keperluan" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-600 outline-none transition-all" placeholder="Deskripsikan tujuan peminjaman..." rows="3"></textarea>
+                @error('keperluan') <span class="text-rose-500 text-[10px]">{{ $message }}</span> @enderror
+            </div>
+
+            <div class="pt-4 flex gap-4">
+                <button @click="openModal = false" type="button" class="flex-1 px-6 py-4 bg-slate-100 text-slate-600 font-bold rounded-xl hover:bg-slate-200 transition-all">
+                    Batal
                 </button>
-            </form>
-        </div>
+                <button type="submit" 
+                    class="flex-[2] px-6 py-4 bg-emerald-600 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    @if($barang_id && $jumlah > ($daftar_barang->find($barang_id)->stok_tersedia ?? 0)) disabled @endif>
+                    <span class="material-symbols-outlined">save</span>
+                    Simpan Transaksi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
     </div>
 </div>
