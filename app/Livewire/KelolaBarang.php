@@ -120,7 +120,5 @@ class KelolaBarang extends Component
     public function confirmDelete($id)
     {
         $this->selectedId = $id;
-        // Debug: pastikan selectedId ter-set
-        \Log::info('confirmDelete called with id: ' . $id . ', selectedId set to: ' . $this->selectedId);
     }
 }

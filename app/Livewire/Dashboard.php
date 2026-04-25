@@ -15,9 +15,15 @@ class Dashboard extends Component
     {
         // Mengambil data untuk statistik (Aset, Dipinjam, Rusak)
         $stats = [
+            // Total stok semua barang yang tersedia
             'tersedia' => Barang::sum('stok_tersedia'),
-            'dipinjam' => Peminjaman::where('status', 'dipinjam')->count(),
-            'rusak'    => Peminjaman::where('kondisi_barang', 'Rusak')->count(),
+            
+            // Total barang yang sedang dipinjam (dari tabel peminjaman)
+            'dipinjam' => Peminjaman::where('status', 'Dipinjam')->sum('jumlah'),
+            
+            // Perbaikan: Ambil data 'Rusak' dari tabel BARANGS, bukan peminjaman
+            // Pastikan Anda memiliki kolom 'kondisi' atau sejenisnya di tabel barangs
+            'rusak' => Barang::where('kondisi', 'Rusak')->count(),
         ];
 
         // Mengambil riwayat untuk "Menu Laporan" di flowchart
@@ -30,6 +36,6 @@ class Dashboard extends Component
             'stats' => $stats,
             'activities' => $activities,
             'user' => Auth::user() // INI SOLUSI ERROR KAMU
-        ]);
+        ])->layout('layouts.app');
     }
 }

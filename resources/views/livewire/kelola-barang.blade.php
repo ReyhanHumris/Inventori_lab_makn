@@ -92,7 +92,7 @@
     </div>
 
     <div x-data="{ open: @entangle('isModalOpen') }" x-show="open" 
-         class="fixed inset-0 z-[100] overflow-y-auto" style="display: none;">
+         class="fixed inset-0 z-[100] overflow-y-auto">
         
         <div x-show="open" 
              x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
@@ -174,13 +174,6 @@
             </div>
         </div>      
     </div>
-
-    <!-- Debug: Selected ID: {{ $selectedId }} -->
-    @if($selectedId)
-        <div class="mb-4 p-2 bg-yellow-100 text-yellow-800 text-sm">
-            Selected ID for delete: {{ $selectedId }}
-        </div>
-    @endif
 
     <!-- Modal Konfirmasi Hapus -->
     @if($selectedId)

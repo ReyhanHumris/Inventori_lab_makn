@@ -2,25 +2,34 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Peminjaman extends Model
 {
+    use HasFactory;
+
+    protected $table = 'peminjaman';
+
     protected $fillable = [
-        'barang_id', 'user_id', 'nama_peminjam', 
-        'jumlah_pinjam', 'tgl_pinjam', 'tgl_kembali', 
-        'kondisi_barang', 'status'
+        'user_id',
+        'barang_id',
+        'nama_peminjam',
+        'nim',
+        'jumlah',
+        'tgl_pinjam',
+        'tgl_kembali',
+        'status',
     ];
 
-    // Relasi ke Barang (Setiap peminjaman punya satu barang)
-    public function barang(): BelongsTo
+    // Relasi ke Barang
+    public function barang()
     {
         return $this->belongsTo(Barang::class);
     }
 
-    // Relasi ke User/Petugas (Setiap peminjaman dicatat oleh satu user)
-    public function user(): BelongsTo
+    // Relasi ke User (Admin)
+    public function user()
     {
         return $this->belongsTo(User::class);
     }
