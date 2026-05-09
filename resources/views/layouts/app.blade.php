@@ -96,10 +96,7 @@
                 </div>
                 <a href="{{ route('peminjaman') }}" 
                    class="flex items-center px-4 py-3 text-sm font-semibold rounded-xl transition-all {{ request()->routeIs('peminjaman') ? 'bg-emerald-600 text-white shadow-md shadow-emerald-100' : 'text-slate-600 hover:bg-slate-50' }}">
-                    <span class="material-symbols-outlined mr-3">outbox</span> Peminjaman
-                </a>
-                <a href="#" class="flex items-center px-4 py-3 text-sm font-semibold text-slate-600 rounded-xl hover:bg-slate-50">
-                    <span class="material-symbols-outlined mr-3">move_to_inbox</span> Pengembalian
+                    <span class="material-symbols-outlined mr-3">outbox</span> Transaksi Peminjaman
                 </a>
             </nav>
 
