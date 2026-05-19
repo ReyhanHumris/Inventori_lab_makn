@@ -14,4 +14,9 @@ class Barang extends Model
     {
         return $this->hasMany(Peminjaman::class);
     }
+
+    public function maintenanceLogs(): HasMany
+    {
+        return $this->hasMany(MaintenanceLog::class);
+    }
 }

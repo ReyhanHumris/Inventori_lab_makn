@@ -10,6 +10,13 @@ class Laporan extends Component
 {
     public $tgl_mulai, $tgl_selesai, $status_filter = 'semua';
 
+    public function mount()
+    {
+        if (auth()->user()->role === 'peminjam') {
+            abort(403, 'Akses terbatas untuk petugas dan kepala laboratorium.');
+        }
+    }
+
     public function render()
     {
         $query = Peminjaman::with('barang');
